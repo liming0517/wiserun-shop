@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiserun.goods.dao.BrandMapper" >
+        <resultMap id="brandResultMap" type="com.wiserun.goods.pojo.Brand">
+            <result column="id" property="id" ></result>
+            <result column="name" property="name"></result>
+            <result column="image" property="image"></result>
+            <result column="letter" property="letter"></result>
+            <result column="seq" property="seq"></result>
+        </resultMap>
+    <!--    public List<Brand> selectAll();-->
+        <select id="selectAll" resultMap="brandResultMap" parameterType="java.util.List">
+            SELECT  * FROM tb_brand;
+        </select>
+
+    <!--public Brand selectByid();-->
+    <select id="selectByid" resultMap="brandResultMap" parameterType="com.wiserun.goods.pojo.Brand">
+            SELECT * FROM tb_brand WHERE id= #{id}
+    </select>
+
+    <!--public Integer insertBrand(Brand brand);-->
+    <insert id="insertBrand" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_brand(name,image,letter,seq) VALUES (#{name},#{image},#{letter},#{seq});
+    </insert>
+
+    <!--updateBrand-->
+    <update id="updateBrand" parameterType="com.wiserun.goods.pojo.Brand">
+        UPDATE  tb_brand SET name=#{brand.name},image=#{brand.image},letter=#{brand.letter},seq=#{brand.seq} WHERE id=#{brand.id}
+    </update>
+
+    <!--deleteBrand-->
+    <delete id="deleteBrand" parameterType="java.lang.Integer">
+        DELETE FROM tb_brand WHERE  id=#{id}
+    </delete>
+
+    <!--selectByAny-->
+    <select id="selectByAny" parameterType="java.util.List" resultMap="brandResultMap" >
+        SELECT * FROM tb_brand WHERE 1=1
+        <if test="brand!=null and brand.name!=null and brand.name!=''">
+            and name like CONCAT('%',#{brand.name,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="brand!=null and brand.image!=null and brand.image!=''">
+            and image like CONCAT('%',#{brand.image},'%')
+        </if>
+        <if test="brand!=null and brand.letter!=null and brand.letter!=''">
+            and letter like "%"#{brand.letter}"%"
+        </if>
+        <if test="brand!=null and brand.seq!=null and brand.seq!=''">
+            and seq like '%${brand.seq}%'
+        </if>
+    </select>
+
+    <!--selectPage-->
+    <select id="selectPage" parameterType="java.util.List" resultMap="brandResultMap">
+        SELECT * FROM tb_brand limit #{curPage},#{num}
+    </select>
+
+    <!--selectPageByAny-->
+    <select id="selectPageByAny" parameterType="java.util.List" resultMap="brandResultMap">
+        SELECT *
+        FROM    tb_brand
+        WHERE  1=1
+        <if test="brand!=null and brand.name!=null and brand.name !=''">
+            and name like CONCAT('%',#{brand.name},'%')
+        </if>
+        <if test="brand!=null and brand.image!=null and brand.image!=''">
+            and image like '%${brand.image}%'
+        </if>
+        <if test="brand!=null and brand.letter!=null and brand.letter!=''">
+            and letter like "%"#{brand.letter}"%"
+        </if>
+        <if test="brand!=null and brand.seq!=null and brand.seq!=''">
+            and seq like '%${brand.seq}%'
+        </if>
+        limit #{page},#{num}
+    </select>
+</mapper>
